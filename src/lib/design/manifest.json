@@ -1,0 +1,19 @@
+{
+  "repository": "mkpoli/glyph-atlas",
+  "commit": "9774d2c8ce23d5fab219f0d7df7cf7853bb26f31",
+  "sourceDir": "packages/design-system/src",
+  "files": {
+    "tokens.css": {
+      "sha256": "0cb2982469a36c10d81be3b16ec6a857fbdd5a2bc086362c8c7633195e282d13",
+      "bytes": 3962
+    },
+    "base.css": {
+      "sha256": "997cda4aacbd1ce8cfc9e2ab86140c87c0490360f5c286ba640b5da762dc3428",
+      "bytes": 2776
+    },
+    "components.css": {
+      "sha256": "4fca2a4977b053e9b13131d580937fc7032cd7a8c038c2cbeec94395da0ac2de",
+      "bytes": 7416
+    }
+  }
+}

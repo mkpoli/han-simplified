@@ -25,6 +25,14 @@ describe('i18n', () => {
     expect(negotiate(undefined, null)).toBe('en')
   })
 
+  test('negotiate respects Accept-Language quality weights and q=0 exclusions', () => {
+    expect(negotiate(undefined, 'ja;q=0,en;q=1')).toBe('en')
+    expect(negotiate(undefined, 'en;q=0.1,ja;q=1')).toBe('ja')
+    expect(negotiate(undefined, 'zh-TW;q=0.5,zh-CN;q=0.9')).toBe('zh-Hans')
+    expect(negotiate(undefined, 'ko;q=0.8,vi;q=0.8')).toBe('ko')
+    expect(negotiate(undefined, 'ja;q=0')).toBe('en')
+  })
+
   test('every locale catalogue has the exact key set of en.json', () => {
     const baseKeys = Object.keys(catalogues.en).sort()
     for (const locale of LOCALES) {

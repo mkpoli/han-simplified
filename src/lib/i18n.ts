@@ -36,9 +36,24 @@ export const isLocale = (value: string | undefined | null): value is Locale =>
 
 export function negotiate(cookie: string | undefined, header: string | null): Locale {
   if (isLocale(cookie)) return cookie
-  for (const part of (header ?? '').split(',')) {
-    const tag = part.split(';')[0].trim()
+  const candidates: Array<{ tag: string; q: number; index: number }> = []
+  for (const [index, part] of (header ?? '').split(',').entries()) {
+    const [rawTag, ...params] = part.split(';')
+    const tag = rawTag.trim()
     if (!tag) continue
+    let q = 1
+    for (const param of params) {
+      const match = param.trim().match(/^q\s*=\s*(.+)$/i)
+      if (!match) continue
+      const parsed = Number(match[1].trim())
+      q = Number.isFinite(parsed) ? parsed : 0
+    }
+    if (q <= 0) continue
+    candidates.push({ tag, q, index })
+  }
+  candidates.sort((a, b) => b.q - a.q || a.index - b.index)
+
+  for (const { tag } of candidates) {
     if (isLocale(tag)) return tag
     if (/^zh-(TW|HK|MO|Hant)/i.test(tag)) return 'zh-Hant'
     if (/^zh/i.test(tag)) return 'zh-Hans'

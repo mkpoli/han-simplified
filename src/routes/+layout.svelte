@@ -50,11 +50,25 @@
     currentTheme = data.theme
   })
 
-  function closePopover(el: HTMLElement | undefined) {
-    if (!el || !el.hasAttribute('popover')) return
-    if (el.matches(':popover-open') || el.classList.contains(':popover-open')) {
-      el.hidePopover?.()
+  $effect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = isDesignPage ? 'en' : activeLocale
     }
+  })
+
+  function isPopoverOpen(el: HTMLElement | undefined): boolean {
+    if (!el || !el.hasAttribute('popover')) return false
+    if (el.classList.contains(':popover-open')) return true
+    try {
+      return el.matches(':popover-open')
+    } catch {
+      return false
+    }
+  }
+
+  function closePopover(el: HTMLElement | undefined) {
+    if (!isPopoverOpen(el)) return
+    el?.hidePopover?.()
   }
 
   function rememberLocale(tag: Locale) {
@@ -109,9 +123,7 @@
       if (!force && !isWide && currentWidth <= lastMeasuredWidth) return
       lastMeasuredWidth = currentWidth
 
-      const wasOpen =
-        navMenuEl.hasAttribute('popover') &&
-        (navMenuEl.matches(':popover-open') || navMenuEl.classList.contains(':popover-open'))
+      const wasOpen = isPopoverOpen(navMenuEl)
 
       isMeasuring = true
       headerEl.classList.add('is-measuring', 'is-wide')

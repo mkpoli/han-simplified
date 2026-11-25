@@ -1,7 +1,12 @@
 import { page } from '$app/state'
 import { isLocale, translate, type Locale, type MessageKey } from './i18n'
 
-export const locale = (): Locale => (isLocale(page.params.locale) ? page.params.locale : 'en')
+export const locale = (): Locale =>
+  isLocale(page.params.locale)
+    ? page.params.locale
+    : isLocale(page.data?.locale)
+      ? page.data.locale
+      : 'en'
 
 export const t = (
   key: MessageKey | `${string}.${string}`,

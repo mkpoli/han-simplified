@@ -84,7 +84,7 @@
   </svg>
 {/snippet}
 
-<div class="design">
+<div class="design" lang="en">
   <header class="hero">
     <p class="overline">Glyph Atlas · Simplified Han Compared</p>
     <div class="hero-title">

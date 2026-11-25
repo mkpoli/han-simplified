@@ -100,7 +100,7 @@
 
     const onStorage = (event: StorageEvent) => {
       if (event.key !== THEME_STORAGE_KEY && event.key !== null) return
-      const next = parseTheme(event.newValue)
+      const next = readStoredTheme() ?? 'system'
       currentTheme = next
       applyThemeToDocument(next)
     }

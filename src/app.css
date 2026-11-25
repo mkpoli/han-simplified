@@ -1,0 +1,237 @@
+@import './lib/design/tokens.css';
+@import './lib/design/base.css';
+@import './lib/design/components.css';
+
+/* Simplified Han Compared overrides on top of the pinned Glyph Atlas tokens.
+   Palette and component rhythm match the Rare Character Compendium. */
+:root {
+  color-scheme: light dark;
+  --muted: light-dark(#67676f, #a3a3ac);
+  --good: light-dark(#35704f, #82cda3);
+  --on-action: #fff;
+  --mark: #e0241b;
+  --page-gutter: clamp(1rem, 5vi - 0.65rem, 3.5rem);
+  --target-size: 24px;
+  --tile-size: 145px;
+
+  /* Link-source palette from the Compendium's tag tokens (used for 譜 lines). */
+  --tag-general-ink: var(--muted);
+  --tag-general-bg: var(--surface-sunken);
+  --tag-general-line: var(--line);
+  --tag-region-ink: light-dark(#8b4300, #ffb067);
+  --tag-region-bg: light-dark(#fff2e2, #382411);
+  --tag-region-line: light-dark(#edc594, #6c4723);
+  --tag-language-ink: light-dark(#154c8a, #84beff);
+  --tag-language-bg: light-dark(#eaf3ff, #16283e);
+  --tag-language-line: light-dark(#aacbf2, #2d4e77);
+  --tag-form-ink: light-dark(#5c318a, #c79bff);
+  --tag-form-bg: light-dark(#f3ecff, #271b3b);
+  --tag-form-line: light-dark(#cbb4f0, #513878);
+  --tag-domain-ink: light-dark(#19623b, #73d39a);
+  --tag-domain-bg: light-dark(#e9f8ee, #142f20);
+  --tag-domain-line: light-dark(#a4dbb8, #285b3f);
+  --tag-meta-ink: light-dark(#872748, #f48eae);
+  --tag-meta-bg: light-dark(#fdebf1, #381825);
+  --tag-meta-line: light-dark(#eab5c6, #6b2f45);
+
+  /* Scrollbar thumb keeps >= 3:1 contrast against both --paper and --surface. */
+  --scrollbar-thumb: light-dark(#83838e, #7a7a86);
+  --scrollbar-thumb-hover: light-dark(#67676f, #a3a3ac);
+  --scrollbar-track: transparent;
+
+  /* CJK font stacks follow the active language, overridden on every [lang] element. */
+  --cjk: "Hiragino Sans", "Yu Gothic", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK JP", "Noto Sans JP";
+  --cjk-serif: "Hiragino Mincho ProN", "Yu Mincho", "Songti SC", "Noto Serif CJK JP", "Noto Serif JP", serif;
+}
+
+/* Reflect <meta name="color-scheme"> back onto :root so light-dark() follows manual overrides. */
+:root:has(> head > meta[name="color-scheme"][content="dark"]),
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root:has(> head > meta[name="color-scheme"][content="light"]),
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:lang(zh-Hans) {
+  --cjk: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC";
+  --cjk-serif: "Songti SC", "Source Han Serif SC", "SimSun", "Noto Serif CJK SC", "Noto Serif SC", serif;
+}
+:lang(zh-Hant) {
+  --cjk: "PingFang TC", "Source Han Sans TC", "Microsoft JhengHei", "Noto Sans CJK TC", "Noto Sans TC";
+  --cjk-serif: "Songti TC", "Source Han Serif TC", "PMingLiU", "Noto Serif CJK TC", "Noto Serif TC", serif;
+}
+:lang(ko) {
+  --cjk: "Apple SD Gothic Neo", "Source Han Sans K", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR";
+  --cjk-serif: "Nanum Myeongjo", "Source Han Serif K", "Batang", "Noto Serif CJK KR", "Noto Serif KR", serif;
+}
+:lang(ja) {
+  --cjk: "Hiragino Sans", "Yu Gothic", "Meiryo", "Noto Sans CJK JP", "Noto Sans JP";
+  --cjk-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", serif;
+}
+
+:root,
+[lang] {
+  font-family: Inter, "Helvetica Neue", Arial, var(--cjk), sans-serif;
+}
+
+/* Body 14 px, nothing under 12 px on application surfaces. */
+body {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+
+button,
+a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling with legacy WebKit fallback isolated behind @supports. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+@supports not (scrollbar-color: auto) {
+  * {
+    scrollbar-width: auto;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
+
+/* Hide popovers before the polyfill loads on browsers without native Popover API. */
+@supports not selector(:popover-open) {
+  [popover]:not(.\:popover-open) {
+    display: none;
+  }
+}
+
+/* Compendium control overrides: primary action uses --action-surface, minimum text 12 px. */
+.ga-button {
+  font-size: 14px;
+}
+.ga-button--primary {
+  border-color: var(--action-surface);
+  background: var(--action-surface);
+  color: var(--on-action);
+  font-size: 14px;
+}
+.ga-button--primary:hover {
+  border-color: var(--action-surface);
+  background: var(--action-surface);
+  opacity: 0.88;
+}
+.ga-button--quiet {
+  font-size: 13px;
+}
+.ga-badge {
+  font-size: 12px;
+}
+.ga-badge--transcribed {
+  color: var(--uncertain-ink);
+  background: var(--uncertain-badge);
+}
+.ga-badge--listed {
+  color: var(--muted);
+  background: var(--surface-sunken);
+}
+.ga-menu__label {
+  font-size: 12px;
+}
+.ga-tab {
+  font-size: 13px;
+}
+.ga-input,
+.ga-select,
+.ga-textarea {
+  font-size: max(1rem, 1em);
+}
+
+.text-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.text-link:hover {
+  color: var(--accent);
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 12px;
+}
+.mono {
+  font-family: var(--ga-font-mono);
+}
+
+.page {
+  inline-size: 100%;
+  max-inline-size: 1280px;
+  margin-inline: auto;
+  padding: clamp(1.125rem, 3vi, 1.75rem) var(--page-gutter) 72px;
+}
+.page.narrow {
+  max-inline-size: 800px;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-inline-size: 0;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Photos stay on --scan-paper unchanged in dark mode; focus ring and box sit outside the ink. */
+.scan-frame {
+  position: relative;
+  display: inline-block;
+  background: var(--scan-paper);
+  border: 1px solid var(--line);
+  border-radius: var(--ga-radius-sm);
+  overflow: hidden;
+}
+.scan-box {
+  position: absolute;
+  border: 2px solid var(--mark);
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-size: 44px;
+  }
+}

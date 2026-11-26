@@ -1,0 +1,425 @@
+[
+  {
+    "id": "cn-1934",
+    "country": "cn",
+    "year": 1934,
+    "title": "手頭字第一期字彙",
+    "kind": "civic",
+    "coverage": "diff",
+    "body": "上海文化界",
+    "adopted_on": "1935-02-24",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1935",
+    "country": "cn",
+    "year": 1935,
+    "title": "第一批簡體字表",
+    "kind": "withdrawn",
+    "coverage": "diff",
+    "body": "中華民國教育部",
+    "adopted_on": "1935-08-21",
+    "withdrawn_on": "1936-02",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1955-draft",
+    "country": "cn",
+    "year": 1955,
+    "title": "汉字简化方案草案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1955-rev",
+    "country": "cn",
+    "year": 1955,
+    "title": "汉字简化方案修正草案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1955-draft"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1956",
+    "country": "cn",
+    "year": 1956,
+    "title": "汉字简化方案",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "中华人民共和国国务院",
+    "adopted_on": "1956-01-28",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1955-rev"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1963",
+    "country": "cn",
+    "year": 1963,
+    "title": "简化汉字修订方案（草案）",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1964",
+    "country": "cn",
+    "year": 1964,
+    "title": "简化字总表",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "1964-05",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1956"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1975",
+    "country": "cn",
+    "year": 1975,
+    "title": "第二次汉字简化方案（草案）",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1977",
+    "country": "cn",
+    "year": 1977,
+    "title": "第二次汉字简化方案（草案）",
+    "kind": "withdrawn",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "1977-12-20",
+    "withdrawn_on": "1986-06-24",
+    "replaces": [
+      "cn-1975"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1981",
+    "country": "cn",
+    "year": 1981,
+    "title": "第二次汉字简化方案（修订草案）征求意见表",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1977"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1985",
+    "country": "cn",
+    "year": 1985,
+    "title": "增订汉字简化方案（征求意见稿）",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "中国文字改革委员会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "cn-1986",
+    "country": "cn",
+    "year": 1986,
+    "title": "简化字总表",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "国家语言文字工作委员会",
+    "adopted_on": "1986-10-10",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1964"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "cn-2013",
+    "country": "cn",
+    "year": 2013,
+    "title": "通用规范汉字表",
+    "kind": "adopted",
+    "coverage": "inventory",
+    "body": "中华人民共和国国务院",
+    "adopted_on": "2013-06-05",
+    "withdrawn_on": "",
+    "replaces": [
+      "cn-1986"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1919",
+    "country": "jp",
+    "year": 1919,
+    "title": "漢字整理案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "文部省普通学務局",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1923",
+    "country": "jp",
+    "year": 1923,
+    "title": "常用漢字表",
+    "kind": "draft",
+    "coverage": "inventory",
+    "body": "臨時国語調査会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1926",
+    "country": "jp",
+    "year": 1926,
+    "title": "字体整理案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "臨時国語調査会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1931",
+    "country": "jp",
+    "year": 1931,
+    "title": "常用漢字表",
+    "kind": "draft",
+    "coverage": "inventory",
+    "body": "臨時国語調査会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1923"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1938",
+    "country": "jp",
+    "year": 1938,
+    "title": "漢字字体整理案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "国語審議会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1926"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1942",
+    "country": "jp",
+    "year": 1942,
+    "title": "標準漢字表",
+    "kind": "draft",
+    "coverage": "inventory",
+    "body": "国語審議会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1931"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1946",
+    "country": "jp",
+    "year": 1946,
+    "title": "当用漢字表",
+    "kind": "adopted",
+    "coverage": "inventory",
+    "body": "内閣",
+    "adopted_on": "1946-11-16",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1947",
+    "country": "jp",
+    "year": 1947,
+    "title": "活字字体整理案",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "文部省活字字体整理に関する協議会",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1949",
+    "country": "jp",
+    "year": 1949,
+    "title": "当用漢字字体表",
+    "kind": "adopted",
+    "coverage": "inventory",
+    "body": "内閣",
+    "adopted_on": "1949-04-28",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1947"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-1981",
+    "country": "jp",
+    "year": 1981,
+    "title": "常用漢字表",
+    "kind": "adopted",
+    "coverage": "inventory",
+    "body": "内閣",
+    "adopted_on": "1981-10-01",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1946",
+      "jp-1949"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "jp-2010",
+    "country": "jp",
+    "year": 2010,
+    "title": "常用漢字表",
+    "kind": "adopted",
+    "coverage": "inventory",
+    "body": "内閣",
+    "adopted_on": "2010-11-30",
+    "withdrawn_on": "",
+    "replaces": [
+      "jp-1981"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "kr-1967-11",
+    "country": "kr",
+    "year": 1967,
+    "title": "한자 약자 시안 (542자)",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "대한민국 문교부",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "kr-1967-12",
+    "country": "kr",
+    "year": 1967,
+    "title": "한자 약자 수정안 (198자)",
+    "kind": "draft",
+    "coverage": "diff",
+    "body": "대한민국 문교부",
+    "adopted_on": "",
+    "withdrawn_on": "",
+    "replaces": [
+      "kr-1967-11"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "sg-1969",
+    "country": "sg",
+    "year": 1969,
+    "title": "简体字表",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "新加坡教育部",
+    "adopted_on": "1969-06",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  },
+  {
+    "id": "sg-1974",
+    "country": "sg",
+    "year": 1974,
+    "title": "简体字总表",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "新加坡教育部",
+    "adopted_on": "1974-01",
+    "withdrawn_on": "",
+    "replaces": [
+      "sg-1969"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "sg-1976",
+    "country": "sg",
+    "year": 1976,
+    "title": "简体字总表（修订本）",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "新加坡教育部",
+    "adopted_on": "1976-05",
+    "withdrawn_on": "",
+    "replaces": [
+      "sg-1974"
+    ],
+    "state": "listed"
+  },
+  {
+    "id": "my-1981",
+    "country": "my",
+    "year": 1981,
+    "title": "简化汉字总表",
+    "kind": "adopted",
+    "coverage": "diff",
+    "body": "马来西亚简化汉字委员会",
+    "adopted_on": "1981-02-28",
+    "withdrawn_on": "",
+    "replaces": [],
+    "state": "listed"
+  }
+]

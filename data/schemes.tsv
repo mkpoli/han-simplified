@@ -1,0 +1,31 @@
+id	country	year	title	kind	coverage	body	adopted_on	withdrawn_on	replaces	state
+cn-1934	cn	1934	手頭字第一期字彙	civic	diff	上海文化界	1935-02-24			listed
+cn-1935	cn	1935	第一批簡體字表	withdrawn	diff	中華民國教育部	1935-08-21	1936-02		listed
+cn-1955-draft	cn	1955	汉字简化方案草案	draft	diff	中国文字改革委员会				listed
+cn-1955-rev	cn	1955	汉字简化方案修正草案	draft	diff	中国文字改革委员会			cn-1955-draft	listed
+cn-1956	cn	1956	汉字简化方案	adopted	diff	中华人民共和国国务院	1956-01-28		cn-1955-rev	listed
+cn-1963	cn	1963	简化汉字修订方案（草案）	draft	diff	中国文字改革委员会				listed
+cn-1964	cn	1964	简化字总表	adopted	diff	中国文字改革委员会	1964-05		cn-1956	listed
+cn-1975	cn	1975	第二次汉字简化方案（草案）	draft	diff	中国文字改革委员会				listed
+cn-1977	cn	1977	第二次汉字简化方案（草案）	withdrawn	diff	中国文字改革委员会	1977-12-20	1986-06-24	cn-1975	listed
+cn-1981	cn	1981	第二次汉字简化方案（修订草案）征求意见表	draft	diff	中国文字改革委员会			cn-1977	listed
+cn-1985	cn	1985	增订汉字简化方案（征求意见稿）	draft	diff	中国文字改革委员会				listed
+cn-1986	cn	1986	简化字总表	adopted	diff	国家语言文字工作委员会	1986-10-10		cn-1964	listed
+cn-2013	cn	2013	通用规范汉字表	adopted	inventory	中华人民共和国国务院	2013-06-05		cn-1986	listed
+jp-1919	jp	1919	漢字整理案	draft	diff	文部省普通学務局				listed
+jp-1923	jp	1923	常用漢字表	draft	inventory	臨時国語調査会				listed
+jp-1926	jp	1926	字体整理案	draft	diff	臨時国語調査会				listed
+jp-1931	jp	1931	常用漢字表	draft	inventory	臨時国語調査会			jp-1923	listed
+jp-1938	jp	1938	漢字字体整理案	draft	diff	国語審議会			jp-1926	listed
+jp-1942	jp	1942	標準漢字表	draft	inventory	国語審議会			jp-1931	listed
+jp-1946	jp	1946	当用漢字表	adopted	inventory	内閣	1946-11-16			listed
+jp-1947	jp	1947	活字字体整理案	draft	diff	文部省活字字体整理に関する協議会				listed
+jp-1949	jp	1949	当用漢字字体表	adopted	inventory	内閣	1949-04-28		jp-1947	listed
+jp-1981	jp	1981	常用漢字表	adopted	inventory	内閣	1981-10-01		jp-1946,jp-1949	listed
+jp-2010	jp	2010	常用漢字表	adopted	inventory	内閣	2010-11-30		jp-1981	listed
+kr-1967-11	kr	1967	한자 약자 시안 (542자)	draft	diff	대한민국 문교부				listed
+kr-1967-12	kr	1967	한자 약자 수정안 (198자)	draft	diff	대한민국 문교부			kr-1967-11	listed
+sg-1969	sg	1969	简体字表	adopted	diff	新加坡教育部	1969-06			listed
+sg-1974	sg	1974	简体字总表	adopted	diff	新加坡教育部	1974-01		sg-1969	listed
+sg-1976	sg	1976	简体字总表（修订本）	adopted	diff	新加坡教育部	1976-05		sg-1974	listed
+my-1981	my	1981	简化汉字总表	adopted	diff	马来西亚简化汉字委员会	1981-02-28			listed

@@ -201,11 +201,15 @@ export function validateTables(raw: RawTables): ValidationResult {
   const editionsParsed = parseTsv(TABLE_FILES.editions, raw.editions, TABLE_COLUMNS.editions)
   errors.push(...editionsParsed.errors)
   const editionIds = new Set<string>()
+  const editionScheme = new Map<string, string>()
   for (const { line, values: v } of editionsParsed.rows) {
     const loc = `${TABLE_FILES.editions}:${line}`
     if (!v.id.trim()) errors.push(`${loc}: empty edition id`)
     else if (editionIds.has(v.id)) errors.push(`${loc}: duplicate edition id "${v.id}"`)
-    else editionIds.add(v.id)
+    else {
+      editionIds.add(v.id)
+      editionScheme.set(v.id, v.scheme)
+    }
 
     if (!schemeIds.has(v.scheme)) errors.push(`${loc}: unknown scheme "${v.scheme}"`)
     if (v.retrieved_on && !isValidCalendarDate(v.retrieved_on)) {
@@ -228,19 +232,18 @@ export function validateTables(raw: RawTables): ValidationResult {
     })
   }
 
-  // 3. media-manifest.tsv (parsed before pages so pages can validate image_key)
+  // 3. media-manifest.tsv (parsed before pages so pages can validate image_key ownership)
   const mediaParsed = parseTsv(
     TABLE_FILES.media_manifest,
     raw.media_manifest,
     TABLE_COLUMNS.media_manifest,
   )
   errors.push(...mediaParsed.errors)
-  const mediaKeys = new Set<string>()
+  const mediaByKey = new Map<string, MediaManifestRow>()
   for (const { line, values: v } of mediaParsed.rows) {
     const loc = `${TABLE_FILES.media_manifest}:${line}`
     if (!v.image_key.trim()) errors.push(`${loc}: empty image_key`)
-    else if (mediaKeys.has(v.image_key)) errors.push(`${loc}: duplicate image_key "${v.image_key}"`)
-    else mediaKeys.add(v.image_key)
+    else if (mediaByKey.has(v.image_key)) errors.push(`${loc}: duplicate image_key "${v.image_key}"`)
 
     if (!editionIds.has(v.edition)) errors.push(`${loc}: unknown edition "${v.edition}"`)
     const page = parseIntStrict(v.page)
@@ -257,7 +260,7 @@ export function validateTables(raw: RawTables): ValidationResult {
       errors.push(`${loc}: invalid widths "${v.widths}"`)
     }
 
-    dataset.media_manifest.push({
+    const row: MediaManifestRow = {
       image_key: v.image_key,
       edition: v.edition,
       page: page ?? 0,
@@ -265,7 +268,9 @@ export function validateTables(raw: RawTables): ValidationResult {
       width: width ?? 0,
       height: height ?? 0,
       widths,
-    })
+    }
+    if (v.image_key.trim() && !mediaByKey.has(v.image_key)) mediaByKey.set(v.image_key, row)
+    dataset.media_manifest.push(row)
   }
 
   // 4. pages.tsv
@@ -289,8 +294,15 @@ export function validateTables(raw: RawTables): ValidationResult {
     const height = parseIntStrict(v.height)
     if (width === null || width < 1) errors.push(`${loc}: invalid width "${v.width}"`)
     if (height === null || height < 1) errors.push(`${loc}: invalid height "${v.height}"`)
-    if (v.image_key && !mediaKeys.has(v.image_key)) {
-      errors.push(`${loc}: image_key "${v.image_key}" missing from ${TABLE_FILES.media_manifest}`)
+    if (v.image_key) {
+      const media = mediaByKey.get(v.image_key)
+      if (!media) {
+        errors.push(`${loc}: image_key "${v.image_key}" missing from ${TABLE_FILES.media_manifest}`)
+      } else if (media.edition !== v.edition || media.page !== seq) {
+        errors.push(
+          `${loc}: image_key "${v.image_key}" belongs to page (${media.edition}, ${media.page}), not (${v.edition}, ${seq})`,
+        )
+      }
     }
 
     dataset.pages.push({
@@ -327,14 +339,24 @@ export function validateTables(raw: RawTables): ValidationResult {
     else formIds.add(v.id)
 
     if (v.codepoint) {
-      const m = v.codepoint.match(CODEPOINT_RE)
-      if (!m) {
-        errors.push(`${loc}: invalid codepoint "${v.codepoint}"`)
-      } else {
+      const parts = v.codepoint.split(' ')
+      let allValid = parts.length > 0
+      for (const part of parts) {
+        const m = part.match(CODEPOINT_RE)
+        if (!m) {
+          errors.push(`${loc}: invalid codepoint "${v.codepoint}"`)
+          allValid = false
+          break
+        }
         const cp = Number.parseInt(m[1], 16)
         if (cp > 0x10ffff || isPrivateUseCodePoint(cp)) {
-          errors.push(`${loc}: disallowed or private-use codepoint "${v.codepoint}"`)
-        } else if (codepoints.has(v.codepoint)) {
+          errors.push(`${loc}: disallowed or private-use codepoint "${part}"`)
+          allValid = false
+          break
+        }
+      }
+      if (allValid) {
+        if (codepoints.has(v.codepoint)) {
           errors.push(`${loc}: duplicate codepoint "${v.codepoint}"`)
         } else {
           codepoints.add(v.codepoint)
@@ -374,11 +396,15 @@ export function validateTables(raw: RawTables): ValidationResult {
   const entriesParsed = parseTsv(TABLE_FILES.entries, raw.entries, TABLE_COLUMNS.entries)
   errors.push(...entriesParsed.errors)
   const entryIds = new Set<string>()
+  const entryScheme = new Map<string, string>()
   for (const { line, values: v } of entriesParsed.rows) {
     const loc = `${TABLE_FILES.entries}:${line}`
     if (!v.id.trim()) errors.push(`${loc}: empty entry id`)
     else if (entryIds.has(v.id)) errors.push(`${loc}: duplicate entry id "${v.id}"`)
-    else entryIds.add(v.id)
+    else {
+      entryIds.add(v.id)
+      entryScheme.set(v.id, v.scheme)
+    }
 
     if (!schemeIds.has(v.scheme)) errors.push(`${loc}: unknown scheme "${v.scheme}"`)
     const order = parseIntStrict(v.order)
@@ -442,6 +468,15 @@ export function validateTables(raw: RawTables): ValidationResult {
     const loc = `${TABLE_FILES.sightings}:${line}`
     if (!entryIds.has(v.entry)) errors.push(`${loc}: unknown entry "${v.entry}"`)
     if (!editionIds.has(v.edition)) errors.push(`${loc}: unknown edition "${v.edition}"`)
+    if (
+      entryScheme.has(v.entry) &&
+      editionScheme.has(v.edition) &&
+      entryScheme.get(v.entry) !== editionScheme.get(v.edition)
+    ) {
+      errors.push(
+        `${loc}: entry "${v.entry}" (${entryScheme.get(v.entry)}) cannot cite edition "${v.edition}" (${editionScheme.get(v.edition)})`,
+      )
+    }
     const page = parseIntStrict(v.page)
     if (page === null || page < 1) {
       errors.push(`${loc}: invalid page "${v.page}"`)
@@ -450,7 +485,11 @@ export function validateTables(raw: RawTables): ValidationResult {
     }
     if (!isOneOf(v.role, SIGHTING_ROLES)) errors.push(`${loc}: invalid role "${v.role}"`)
     const pos = parseIntStrict(v.pos)
-    if (pos === null || pos < 1) errors.push(`${loc}: invalid pos "${v.pos}"`)
+    if (pos === null || pos < 1) {
+      errors.push(`${loc}: invalid pos "${v.pos}"`)
+    } else if (v.role === 'base' && entryIds.has(v.entry) && !entryBaseKeys.has(`${v.entry}#${pos}`)) {
+      errors.push(`${loc}: base sighting pos ${pos} has no matching entry_base for "${v.entry}"`)
+    }
 
     const x = parseFloatStrict(v.x)
     const y = parseFloatStrict(v.y)

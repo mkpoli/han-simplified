@@ -75,4 +75,41 @@ describe('validator invariants', () => {
     expect(errors.some((e) => e.includes('unverified or differing entries'))).toBe(true)
     expect(errors.some((e) => e.includes('printed=2 != counted=1'))).toBe(true)
   })
+
+  test('allows multi-codepoint word forms while rejecting PUA inside sequences', () => {
+    const raw = emptyTables()
+    raw.forms += 'f-dingning\tU+4E01 U+5B81\t\t\n'
+    raw.forms += 'f-badword\tU+4E01 U+E001\t\t\n'
+    const { errors } = validateTables(raw)
+    expect(errors.some((e) => e.includes('U+4E01 U+5B81'))).toBe(false)
+    expect(errors.some((e) => e.includes('U+E001'))).toBe(true)
+  })
+
+  test('rejects cross-scheme sightings, nonexistent base positions, and mismatched page image keys', () => {
+    const sha = 'a'.repeat(64)
+    const raw = emptyTables()
+    raw.schemes +=
+      'cn-1964\tcn\t1964\t简化字总表\tadopted\tdiff\t中国文字改革委员会\t1964-05\t\t\tlisted\n' +
+      'cn-1977\tcn\t1977\t第二次汉字简化方案（草案）\twithdrawn\tdiff\t中国文字改革委员会\t1977-12-20\t1986-06-24\t\ttranscribed\n'
+    raw.editions +=
+      'ed-64\tcn-1964\t1964 scan\t1964\tHolder\t\t\t2026-11-26\t\t\n' +
+      'ed-77\tcn-1977\t1977 scan\t1977\tHolder\t\t\t2026-11-26\t\t\n'
+    raw.media_manifest +=
+      `img-64-1\ted-64\t1\t${sha}\t1000\t1500\t320,1600\n` +
+      `img-77-1\ted-77\t1\t${sha}\t1000\t1500\t320,1600\n`
+    raw.pages +=
+      'ed-64\t1\tp.1\tfull\t\t\t1000\t1500\timg-64-1\n' +
+      'ed-77\t1\tp.1\tfull\t\t\t1000\t1500\timg-64-1\n'
+    raw.forms += 'f-ba\tU+5DF4\t\t\n' + 'f-base\tU+82AD\t\t\n'
+    raw.entries += 'e-77\tcn-1977\tTable 1\t1\t1\tcharacter\tf-ba\t\t\tprint\tsame\n'
+    raw.entry_bases += 'e-77\t1\tf-base\tzh-Hans\n'
+    raw.sightings +=
+      'e-77\ted-64\t1\tform\t1\t0.1\t0.1\t0.1\t0.1\n' +
+      'e-77\ted-77\t1\tbase\t99\t0.1\t0.1\t0.1\t0.1\n'
+
+    const { errors } = validateTables(raw)
+    expect(errors.some((e) => e.includes('belongs to page (ed-64, 1)'))).toBe(true)
+    expect(errors.some((e) => e.includes('cannot cite edition "ed-64"'))).toBe(true)
+    expect(errors.some((e) => e.includes('no matching entry_base'))).toBe(true)
+  })
 })

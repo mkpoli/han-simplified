@@ -30,14 +30,24 @@ async function main() {
   }
 
   if (checkOnly) {
-    console.log(`Validated ${dataset.schemes.length} schemes across 12 tables with 0 errors.`)
+    console.log(
+      `Validated ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages across 12 tables with 0 errors.`,
+    )
     return
   }
 
   await mkdir(OUT_DIR, { recursive: true })
-  await writeFile(join(OUT_DIR, 'schemes.json'), `${JSON.stringify(dataset.schemes, null, 2)}\n`)
+  await Promise.all([
+    writeFile(join(OUT_DIR, 'schemes.json'), `${JSON.stringify(dataset.schemes, null, 2)}\n`),
+    writeFile(join(OUT_DIR, 'editions.json'), `${JSON.stringify(dataset.editions, null, 2)}\n`),
+    writeFile(join(OUT_DIR, 'pages.json'), `${JSON.stringify(dataset.pages, null, 2)}\n`),
+    writeFile(
+      join(OUT_DIR, 'media-manifest.json'),
+      `${JSON.stringify(dataset.media_manifest, null, 2)}\n`,
+    ),
+  ])
   console.log(
-    `Validated and built ${dataset.schemes.length} schemes -> src/lib/generated/schemes.json`,
+    `Validated and built ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages -> src/lib/generated/`,
   )
 }
 

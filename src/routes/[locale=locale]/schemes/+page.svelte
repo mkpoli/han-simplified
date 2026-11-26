@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import { pageCountOfScheme } from '$lib/data/books'
   import {
     COUNTRIES,
     SCHEME_STATES,
@@ -158,6 +159,7 @@
             {#each group.schemes as scheme (scheme.id)}
               {@const successors = REPLACED_BY.get(scheme.id) ?? []}
               {@const lang = schemeLang(scheme)}
+              {@const pages = pageCountOfScheme(scheme.id)}
               <li id={scheme.id} class="timeline-item">
                 <div class="year-col">
                   <span class="year">{scheme.year}</span>
@@ -166,8 +168,15 @@
 
                 <article class="scheme-card">
                   <div class="card-top">
-                    <h3 class="scheme-title" {lang}>{scheme.title}</h3>
+                    <h3 class="scheme-title" {lang}>
+                      <a class="scheme-title-link" href={href(`/scheme/${scheme.id}`)}>{scheme.title}</a>
+                    </h3>
                     <div class="badges">
+                      {#if pages > 0}
+                        <a class="ga-badge ga-badge--pages" href={href(`/scheme/${scheme.id}/page/1`)}>
+                          {t('book.pageCount', { n: pages })}
+                        </a>
+                      {/if}
                       <span class={stateBadgeClass(scheme.state)}>
                         {#if scheme.state === 'checked'}✓ {/if}{t(`state.${scheme.state}`)}
                       </span>
@@ -372,6 +381,21 @@
     font-size: 16px;
     font-weight: 600;
     line-height: 1.35;
+  }
+
+  .scheme-title-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ga-badge--pages {
+    color: var(--ink);
+    background: var(--surface-selected);
+  }
+
+  .ga-badge--pages:hover {
+    color: var(--accent);
   }
 
   .badges {

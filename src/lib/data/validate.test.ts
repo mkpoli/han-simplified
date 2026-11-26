@@ -1,6 +1,9 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'bun:test'
+import generatedEditions from '../generated/editions.json'
+import generatedMediaManifest from '../generated/media-manifest.json'
+import generatedPages from '../generated/pages.json'
 import generatedSchemes from '../generated/schemes.json'
 import { TABLE_COLUMNS } from './schema'
 import { validateDataDir, validateTables, type RawTables } from './validate'
@@ -23,9 +26,12 @@ describe('repository data validation', () => {
     expect(dataset.schemes.length).toBe(30)
   })
 
-  test('generated schemes.json matches data/schemes.tsv', () => {
+  test('generated JSON files match repository TSV tables', () => {
     const { dataset } = validateDataDir(DATA_DIR)
     expect(generatedSchemes).toEqual(dataset.schemes)
+    expect(generatedEditions).toEqual(dataset.editions)
+    expect(generatedPages).toEqual(dataset.pages)
+    expect(generatedMediaManifest).toEqual(dataset.media_manifest)
   })
 })
 

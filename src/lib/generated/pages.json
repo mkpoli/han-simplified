@@ -1,0 +1,90 @@
+[
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 1,
+    "printed_label": "封面",
+    "side": "full",
+    "raw_sha256": "d25177ed74c72ab60f46df888fb4ba72aa05d3567354f60fbab90c5692d04607",
+    "transform": "none",
+    "width": 2694,
+    "height": 3696,
+    "image_key": "pages/d25177ed74c72ab60f46df888fb4ba72aa05d3567354f60fbab90c5692d04607"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 2,
+    "printed_label": "2",
+    "side": "full",
+    "raw_sha256": "5ef23fa4f1fab8610d64c2a939e6db8700665aa64221278a5f4496bb1cedf36e",
+    "transform": "none",
+    "width": 2681,
+    "height": 3685,
+    "image_key": "pages/5ef23fa4f1fab8610d64c2a939e6db8700665aa64221278a5f4496bb1cedf36e"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 3,
+    "printed_label": "3",
+    "side": "full",
+    "raw_sha256": "fb6c6f618b2c5bdbde38d47ac9ff2130f0f178e28df582395e0690db7008a79e",
+    "transform": "none",
+    "width": 2695,
+    "height": 3675,
+    "image_key": "pages/fb6c6f618b2c5bdbde38d47ac9ff2130f0f178e28df582395e0690db7008a79e"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 4,
+    "printed_label": "4",
+    "side": "full",
+    "raw_sha256": "3c7846f792c686da6e33c66d79e52d1a6b078d5588c9b2d92095d801cdf744e7",
+    "transform": "none",
+    "width": 2695,
+    "height": 3680,
+    "image_key": "pages/3c7846f792c686da6e33c66d79e52d1a6b078d5588c9b2d92095d801cdf744e7"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 5,
+    "printed_label": "5",
+    "side": "full",
+    "raw_sha256": "21ff51537edf94f7918f14fa8b0284de60c0c448347d3aa91c16eb4580188985",
+    "transform": "none",
+    "width": 2696,
+    "height": 3680,
+    "image_key": "pages/21ff51537edf94f7918f14fa8b0284de60c0c448347d3aa91c16eb4580188985"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 6,
+    "printed_label": "6",
+    "side": "full",
+    "raw_sha256": "383ffd6914f3b2d17919f9d091218ad53af7ad7bdf4ae3d60bd02d7682e78724",
+    "transform": "none",
+    "width": 2689,
+    "height": 3680,
+    "image_key": "pages/383ffd6914f3b2d17919f9d091218ad53af7ad7bdf4ae3d60bd02d7682e78724"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 7,
+    "printed_label": "7",
+    "side": "full",
+    "raw_sha256": "73e6321e2dac6e567260a238323a26839848f33e8f870fb20f12efdc4a70dca0",
+    "transform": "none",
+    "width": 2694,
+    "height": 3685,
+    "image_key": "pages/73e6321e2dac6e567260a238323a26839848f33e8f870fb20f12efdc4a70dca0"
+  },
+  {
+    "edition": "cn-1977-sh-1977",
+    "seq": 8,
+    "printed_label": "8",
+    "side": "full",
+    "raw_sha256": "43eafd2f64c3adb3b2fdb21baecc9690e3a7c351088ddf2c2c040307a3aecacc",
+    "transform": "none",
+    "width": 2689,
+    "height": 3698,
+    "image_key": "pages/43eafd2f64c3adb3b2fdb21baecc9690e3a7c351088ddf2c2c040307a3aecacc"
+  }
+]

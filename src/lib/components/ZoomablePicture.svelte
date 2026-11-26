@@ -91,6 +91,7 @@
   }
 
   function keydown(event: KeyboardEvent) {
+    if (event.ctrlKey || event.metaKey || event.altKey) return
     if (event.key === '+' || event.key === '=') {
       event.preventDefault()
       zoomBy(ZOOM_STEP)

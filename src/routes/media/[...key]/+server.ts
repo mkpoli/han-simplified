@@ -6,6 +6,21 @@ const ALLOWED_KEY =
 const NOT_FOUND = () =>
   new Response(null, { status: 404, headers: { 'cache-control': 'no-store' } })
 
+function normalizeWeakEtag(tag: string): string {
+  return tag.trim().replace(/^W\//, '')
+}
+
+function matchesIfNoneMatch(header: string | null, etag: string): boolean {
+  if (!header) return false
+  const trimmed = header.trim()
+  if (trimmed === '*') return true
+  const target = normalizeWeakEtag(etag)
+  return trimmed
+    .split(',')
+    .map((part) => normalizeWeakEtag(part))
+    .some((candidate) => candidate === target)
+}
+
 export const GET: RequestHandler = async ({ params, platform, request }) => {
   const key = params.key
   if (!key || !ALLOWED_KEY.test(key)) return NOT_FOUND()
@@ -23,8 +38,7 @@ export const GET: RequestHandler = async ({ params, platform, request }) => {
   })
   if (object.httpEtag) {
     headers.set('etag', object.httpEtag)
-    const ifNoneMatch = request.headers.get('if-none-match')
-    if (ifNoneMatch && ifNoneMatch === object.httpEtag) {
+    if (matchesIfNoneMatch(request.headers.get('if-none-match'), object.httpEtag)) {
       return new Response(null, { status: 304, headers })
     }
   }

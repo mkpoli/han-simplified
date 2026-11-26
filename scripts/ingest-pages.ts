@@ -71,7 +71,13 @@ async function main() {
 
   if (!edition || !pdf) {
     console.error(
-      'Usage: bun scripts/ingest-pages.ts --edition <id> --pdf <path> [--labels l1,l2,...] [--upload] [--local] [--out-dir <dir>]',
+      'Usage: bun scripts/ingest-pages.ts --edition <id> --pdf <path> [--labels l1,l2,...] (--upload | --local | --out-dir <dir>)',
+    )
+    process.exit(1)
+  }
+  if (!uploadRemote && !uploadLocal && !outCache) {
+    console.error(
+      'Refusing to update TSVs without keeping generated WebP files: pass --upload, --local, or --out-dir <dir>.',
     )
     process.exit(1)
   }

@@ -57,6 +57,13 @@ describe('cn-1977 dataset integrity', () => {
     const sightedEntries = new Set(dataset.sightings.map((s) => s.entry))
     expect(entries.every((e) => sightedEntries.has(e.id))).toBe(true)
 
+    // Table 2(8) analogical entries print only the original base character, never a derived form glyph
+    const t2AnalIds = new Set(t2Anal.map((e) => e.id))
+    const t2AnalFormSightings = dataset.sightings.filter(
+      (s) => t2AnalIds.has(s.entry) && s.role === 'form',
+    )
+    expect(t2AnalFormSightings.length).toBe(0)
+
     // Verify 潦 footnote split shares printed_row and 雕 carries footnote
     const liao = entries.filter((e) => e.footnote.includes('雨水大'))
     expect(liao.length).toBe(2)

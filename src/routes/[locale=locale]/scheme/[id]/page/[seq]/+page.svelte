@@ -124,13 +124,19 @@
     pan = confinePan({ x: -cx * targetZoom, y: -cy * targetZoom }, targetZoom, pic, frame)
   }
 
-  function scrollRowIntoView(entryId: string) {
+  function scrollRowIntoView(entryId: string, focusRow = false) {
     if (!listEl) return
     const row = listEl.querySelector<HTMLElement>(`[data-entry-id="${CSS.escape(entryId)}"]`)
     row?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (focusRow) {
+      row?.querySelector<HTMLButtonElement>('.pair-btn')?.focus({ preventScroll: true })
+    }
   }
 
-  function selectEntry(entryId: string, opts: { scrollList?: boolean; focusScan?: boolean } = {}) {
+  function selectEntry(
+    entryId: string,
+    opts: { scrollList?: boolean; focusRow?: boolean; focusScan?: boolean } = {},
+  ) {
     selectedId = entryId
     const url = new URL(window.location.href)
     url.searchParams.set('entry', entryId)
@@ -139,14 +145,14 @@
     } catch {
       // Ignore if router state isn't initialized during hydration
     }
-    if (opts.scrollList) scrollRowIntoView(entryId)
+    if (opts.scrollList || opts.focusRow) scrollRowIntoView(entryId, opts.focusRow)
     if (opts.focusScan) {
       const item = items.find((i) => i.entry.id === entryId)
       if (item) focusEntryOnScan(item)
     }
   }
 
-  function moveSelection(delta: number) {
+  function moveSelection(delta: number, moveFocus: boolean) {
     if (items.length === 0) return
     const currentIdx = selectedId ? items.findIndex((i) => i.entry.id === selectedId) : -1
     const nextIdx =
@@ -155,7 +161,7 @@
           ? 0
           : items.length - 1
         : Math.max(0, Math.min(items.length - 1, currentIdx + delta))
-    selectEntry(items[nextIdx].entry.id, { scrollList: true })
+    selectEntry(items[nextIdx].entry.id, { scrollList: true, focusRow: moveFocus })
   }
 
   function onKeydown(event: KeyboardEvent) {
@@ -179,12 +185,15 @@
         // ignore
       }
     } else if (zoom <= 1 && items.length > 0) {
+      const inHeaderOrMenu = Boolean(target?.closest('header, nav, [popover]'))
+      if (inHeaderOrMenu) return
+      const inReaderControl = Boolean(target?.closest('.entry-list, .scan-pane'))
       if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
         event.preventDefault()
-        moveSelection(1)
+        moveSelection(1, inReaderControl)
       } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
         event.preventDefault()
-        moveSelection(-1)
+        moveSelection(-1, inReaderControl)
       }
     }
   }
@@ -318,7 +327,7 @@
           </div>
 
           <div class="entry-list" bind:this={listEl}>
-            {#each sections as group (group.section)}
+            {#each sections as group (group.items[0].entry.id)}
               <div class="entry-section">
                 {#if sections.length > 1 || group.section}
                   <h3 class="sec-heading" {lang}>{sectionLabel(group.section)}</h3>

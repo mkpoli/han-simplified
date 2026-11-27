@@ -31,7 +31,7 @@
     overlay?: Snippet
   } = $props()
 
-  let drag = $state<{ id: number; x: number; y: number; pan: Pan } | null>(null)
+  let drag = $state<{ id: number; x: number; y: number; pan: Pan; captured: boolean } | null>(null)
 
   const pictureSize = () => ({ width: image?.offsetWidth ?? 0, height: image?.offsetHeight ?? 0 })
   const frameSize = () => ({ width: frame?.clientWidth ?? 0, height: frame?.clientHeight ?? 0 })
@@ -60,23 +60,32 @@
   function down(event: PointerEvent) {
     if (event.button !== 0 || (event.target as Element).closest('.tools')) return
     if (zoom <= 1) return
-    drag = { id: event.pointerId, x: event.clientX, y: event.clientY, pan }
-    frame!.focus({ preventScroll: true })
-    frame!.setPointerCapture(event.pointerId)
+    drag = { id: event.pointerId, x: event.clientX, y: event.clientY, pan, captured: false }
   }
 
   function move(event: PointerEvent) {
     if (!drag || drag.id !== event.pointerId) return
+    const dx = event.clientX - drag.x
+    const dy = event.clientY - drag.y
+    if (!drag.captured) {
+      if (Math.hypot(dx, dy) < 5) return
+      drag = { ...drag, captured: true }
+      frame!.focus({ preventScroll: true })
+      frame!.setPointerCapture(event.pointerId)
+    }
     pan = settled({
-      x: drag.pan.x + event.clientX - drag.x,
-      y: drag.pan.y + event.clientY - drag.y,
+      x: drag.pan.x + dx,
+      y: drag.pan.y + dy,
     })
   }
 
   function up(event: PointerEvent) {
     if (drag?.id === event.pointerId) {
+      const wasCaptured = drag.captured
       drag = null
-      if (frame?.hasPointerCapture(event.pointerId)) frame.releasePointerCapture(event.pointerId)
+      if (wasCaptured && frame?.hasPointerCapture(event.pointerId)) {
+        frame.releasePointerCapture(event.pointerId)
+      }
     }
   }
 

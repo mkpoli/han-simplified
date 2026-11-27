@@ -73,4 +73,35 @@ describe('cn-1977 dataset integrity', () => {
     const bundlePath = join(DATA_DIR, '../static/data/scheme-cn-1977.json')
     expect(Bun.file(bundlePath).size).toBeGreaterThan(100_000)
   })
+
+  it('validates cn-1964 totals (352, 132, 14, 1754, 39, 146 rules) and cn-1935 (324, 鹽->𥂁)', () => {
+    const { dataset, errors } = validateDataDir(DATA_DIR)
+    expect(errors).toEqual([])
+
+    expect(dataset.schemes.find((s) => s.id === 'cn-1964')?.state).toBe('checked')
+    expect(dataset.schemes.find((s) => s.id === 'cn-1935')?.state).toBe('checked')
+
+    const e64 = dataset.entries.filter((e) => e.scheme === 'cn-1964')
+    expect(e64.filter((e) => e.section === 'table1').length).toBe(352)
+    expect(e64.filter((e) => e.section === 'table2-chars').length).toBe(132)
+    expect(e64.filter((e) => e.section === 'table2-components').length).toBe(14)
+    expect(new Set(e64.filter((e) => e.section === 'table3').map((e) => e.form)).size).toBe(1754)
+    expect(e64.filter((e) => e.section === 'appendix').length).toBe(39)
+    expect(dataset.rules.filter((r) => r.scheme === 'cn-1964').length).toBe(146)
+
+    const e35 = dataset.entries.filter((e) => e.scheme === 'cn-1935')
+    expect(e35.length).toBe(324)
+
+    // Known compilation floor check from PLAN.md: 1935 鹽 is 𥂁 (U+25081), not 盐
+    const formById = new Map(dataset.forms.map((f) => [f.id, f]))
+    const baseByEntry = new Map<string, string[]>()
+    for (const b of dataset.entry_bases) {
+      const list = baseByEntry.get(b.entry) ?? []
+      list.push(formById.get(b.form)?.codepoint ?? '')
+      baseByEntry.set(b.entry, list)
+    }
+    const yan1935 = e35.find((e) => (baseByEntry.get(e.id) ?? []).includes('U+9E7D'))
+    expect(yan1935).toBeDefined()
+    expect(formById.get(yan1935!.form)?.codepoint).toBe('U+25081')
+  })
 })

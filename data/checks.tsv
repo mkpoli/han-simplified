@@ -12,3 +12,10 @@ cn-1977	table2-7	entries	5	5	5 symbolic-substitution characters in Table 2(7).
 cn-1977	table2-8-2-comp	entries	16	16	16 non-standalone simplified components in Table 2(8)(2).
 cn-1977	table2-8-analogical	forms	336	336	348 listed occurrences across 40 components minus 12 dual-component overlaps (熹 艘 褴 盘 霍 焦 憔 樵 礁 蕉 黎 藜) = 336 unique analogical characters.
 cn-1977		rules	61	61	21 Table 1 components + 24 Table 2 standalone components + 16 Table 2 non-standalone components = 61.
+cn-1935		entries	324	324	Printed summary on p. 19 (一七): 以上共計三百二十四字; verified against NLC scan pp. 7–19 (including 鹽→𥂁 on p. 15).
+cn-1964	table1	entries	352	352	Table 1: 352 non-component simplified characters.
+cn-1964	table2-chars	entries	132	132	Table 2(1): 132 simplified characters usable as components.
+cn-1964	table2-components	entries	14	14	Table 2(2): 14 non-standalone simplified components.
+cn-1964	table3	forms	1754	1754	Table 3: 1,903 component-grouped rows yield 1,754 unique analogical simplified characters (duplicates across components counted once, per preface).
+cn-1964	appendix	entries	39	39	Appendix on p. 32: 39 characters excerpted from 第一批异体字整理表.
+cn-1964		rules	146	146	132 standalone simplified characters + 14 non-standalone components = 146 rules.

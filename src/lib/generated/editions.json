@@ -10,5 +10,29 @@
     "retrieved_on": "2026-11-26",
     "sha256": "16112b9a2616ca2b55596a28cf131d6401d3b73eec94f586478f32f8750db5f8",
     "note": "300 dpi colour scan, 8 pages including cover and colophon"
+  },
+  {
+    "id": "cn-1964-wzg-1964",
+    "scheme": "cn-1964",
+    "title": "简化字总表",
+    "imprint": "文字改革出版社出版，1964年5月第1版第1次印刷（统一书号：9060·490）",
+    "holder": "Local scan copy",
+    "source_url": "",
+    "supplied_by": "",
+    "retrieved_on": "2026-11-27",
+    "sha256": "b643a94467f388bfda494e5755f859982ac96ae5cfbee063a6e1346e0d13bedc",
+    "note": "Bilevel scan, 31 pages (pp. 2–32 including appendix and colophon; p. 2 marked 原书缺页)"
+  },
+  {
+    "id": "cn-1935-nlc-1935",
+    "scheme": "cn-1935",
+    "title": "第一批簡體字表",
+    "imprint": "中華民國教育部公布，民國24年（1935年）8月21日",
+    "holder": "National Library of China (via Wikimedia Commons)",
+    "source_url": "https://commons.wikimedia.org/wiki/File:NLC416-08jh009497-19562_%E7%B0%A1%E9%AB%94%E5%AD%97%E8%A1%A8.pdf",
+    "supplied_by": "Wikimedia Commons",
+    "retrieved_on": "2026-11-27",
+    "sha256": "7c6da02b1811102141044bbdf26e575086366759047d24653fca99b62543fafc",
+    "note": "Bilevel scan, 36 pages (NLC416-08jh009497-19562); main character table on pp. 7–25 (printed 五–二三)"
   }
 ]

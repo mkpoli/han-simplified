@@ -102,5 +102,61 @@
     "printed": 61,
     "counted": 61,
     "note": "21 Table 1 components + 24 Table 2 standalone components + 16 Table 2 non-standalone components = 61."
+  },
+  {
+    "scheme": "cn-1935",
+    "section": "",
+    "metric": "entries",
+    "printed": 324,
+    "counted": 324,
+    "note": "Printed summary on p. 19 (一七): 以上共計三百二十四字; verified against NLC scan pp. 7–19 (including 鹽→𥂁 on p. 15)."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "table1",
+    "metric": "entries",
+    "printed": 352,
+    "counted": 352,
+    "note": "Table 1: 352 non-component simplified characters."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "table2-chars",
+    "metric": "entries",
+    "printed": 132,
+    "counted": 132,
+    "note": "Table 2(1): 132 simplified characters usable as components."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "table2-components",
+    "metric": "entries",
+    "printed": 14,
+    "counted": 14,
+    "note": "Table 2(2): 14 non-standalone simplified components."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "table3",
+    "metric": "forms",
+    "printed": 1754,
+    "counted": 1754,
+    "note": "Table 3: 1,903 component-grouped rows yield 1,754 unique analogical simplified characters (duplicates across components counted once, per preface)."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "appendix",
+    "metric": "entries",
+    "printed": 39,
+    "counted": 39,
+    "note": "Appendix on p. 32: 39 characters excerpted from 第一批异体字整理表."
+  },
+  {
+    "scheme": "cn-1964",
+    "section": "",
+    "metric": "rules",
+    "printed": 146,
+    "counted": 146,
+    "note": "132 standalone simplified characters + 14 non-standalone components = 146 rules."
   }
 ]

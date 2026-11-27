@@ -30,8 +30,11 @@ describe('schemes index helpers', () => {
 
   test('filters by country and state', () => {
     expect(filterSchemes(SCHEMES, { country: 'sg' }).length).toBe(3)
-    expect(filterSchemes(SCHEMES, { state: 'listed' }).length).toBe(30)
-    expect(filterSchemes(SCHEMES, { state: 'checked' }).length).toBe(0)
+    const checked = filterSchemes(SCHEMES, { state: 'checked' })
+    const transcribed = filterSchemes(SCHEMES, { state: 'transcribed' })
+    const listed = filterSchemes(SCHEMES, { state: 'listed' })
+    expect(checked.some((s) => s.id === 'cn-1977')).toBe(true)
+    expect(checked.length + transcribed.length + listed.length).toBe(30)
   })
 
   test('picks regional lang tags for each scheme', () => {

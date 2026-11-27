@@ -1,9 +1,14 @@
+import rawChecks from '$lib/generated/checks.json'
 import rawEditions from '$lib/generated/editions.json'
+import rawPageEntryCounts from '$lib/generated/page-entry-counts.json'
 import rawPages from '$lib/generated/pages.json'
-import type { EditionRow, PageRow } from './schema'
+import type { CheckRow, EditionRow, PageRow } from './schema'
 
 export const EDITIONS: readonly EditionRow[] = rawEditions as EditionRow[]
 export const PAGES: readonly PageRow[] = rawPages as PageRow[]
+export const CHECKS: readonly CheckRow[] = rawChecks as CheckRow[]
+export const PAGE_ENTRY_COUNTS: Readonly<Record<string, number>> =
+  rawPageEntryCounts as Record<string, number>
 
 export const EDITION_BY_ID: ReadonlyMap<string, EditionRow> = new Map(
   EDITIONS.map((ed) => [ed.id, ed]),
@@ -24,4 +29,12 @@ export function pagesOfEdition(editionId: string): PageRow[] {
 export function pageCountOfScheme(schemeId: string): number {
   const ed = primaryEditionOf(schemeId)
   return ed ? pagesOfEdition(ed.id).length : 0
+}
+
+export function checksOfScheme(schemeId: string): CheckRow[] {
+  return CHECKS.filter((c) => c.scheme === schemeId)
+}
+
+export function pageEntryCount(editionId: string, seq: number): number {
+  return PAGE_ENTRY_COUNTS[`${editionId}#${seq}`] ?? 0
 }

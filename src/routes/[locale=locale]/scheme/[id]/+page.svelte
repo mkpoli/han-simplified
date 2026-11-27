@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sectionLabel } from '$lib/data/forms'
   import { schemeLang, type SchemeRow, type SchemeState } from '$lib/data/schema'
   import { SCHEME_BY_ID } from '$lib/data/schemes'
   import { pageImageUrl } from '$lib/media'
@@ -118,6 +119,53 @@
     {/if}
   </header>
 
+  {#if data.checks.length > 0}
+    <section class="section">
+      <div class="section-head">
+        <h2 id="totals-heading">{t('book.totals')}</h2>
+        <span class="count-label">{data.checks.length}</span>
+      </div>
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        aria-labelledby="totals-heading"
+        style:--lbl-section={`"${t('book.section')}"`}
+        style:--lbl-metric={`"${t('book.metric')}"`}
+        style:--lbl-printed={`"${t('book.printed')}"`}
+        style:--lbl-counted={`"${t('book.counted')}"`}
+        style:--lbl-note={`"${t('book.note')}"`}
+      >
+        <table class="totals-table">
+          <thead>
+            <tr>
+              <th scope="col">{t('book.section')}</th>
+              <th scope="col">{t('book.metric')}</th>
+              <th scope="col" class="num">{t('book.printed')}</th>
+              <th scope="col" class="num">{t('book.counted')}</th>
+              <th scope="col">{t('book.note')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each data.checks as chk (chk.section + '#' + chk.metric)}
+              {@const exact = chk.printed === chk.counted}
+              <tr>
+                <th scope="row" {lang}>{sectionLabel(chk.section)}</th>
+                <td data-col="metric">{t(`book.metric.${chk.metric}`)}</td>
+                <td data-col="printed" class="num mono">{chk.printed}</td>
+                <td data-col="counted" class="num mono" class:is-exact={exact} class:is-diff={!exact}>
+                  {chk.counted}{#if exact} ✓{/if}
+                </td>
+                <td data-col="note" class="note-cell">{chk.note || '—'}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {/if}
+
   {#if data.editions.length > 0}
     <section class="section">
       <div class="section-head">
@@ -127,6 +175,7 @@
 
       <ol class="page-grid">
         {#each data.pages as p (p.seq)}
+          {@const count = data.entryCounts[p.seq] ?? 0}
           <li>
             <a class="page-card" href={href(`/scheme/${scheme.id}/page/${p.seq}`)}>
               <span class="thumb-frame">
@@ -140,7 +189,11 @@
               </span>
               <span class="thumb-meta">
                 <span class="thumb-label">{p.printed_label}</span>
-                <span class="mono thumb-seq">#{p.seq}</span>
+                {#if count > 0}
+                  <span class="mono thumb-count">{t('book.entryCount', { n: count })}</span>
+                {:else}
+                  <span class="mono thumb-seq">#{p.seq}</span>
+                {/if}
               </span>
             </a>
           </li>
@@ -334,6 +387,144 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .table-wrap {
+    overflow: auto;
+    max-inline-size: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--ga-radius-md);
+    background: var(--surface);
+    container-type: inline-size;
+  }
+
+  .table-wrap:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .totals-table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+  }
+
+  .totals-table thead th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background: var(--surface-sunken);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: start;
+    padding: 9px 12px;
+    border-block-end: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  .totals-table tbody th,
+  .totals-table tbody td {
+    padding: 9px 12px;
+    border-block-end: 1px solid var(--line);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .totals-table tbody tr:last-child th,
+  .totals-table tbody tr:last-child td {
+    border-block-end: 0;
+  }
+
+  .totals-table tbody th {
+    font-weight: 550;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .totals-table .num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .totals-table .is-exact {
+    color: var(--good);
+    font-weight: 600;
+  }
+
+  .totals-table .is-diff {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .totals-table .note-cell {
+    color: var(--muted);
+    max-inline-size: 46ch;
+  }
+
+  @container (width < 600px) {
+    .totals-table,
+    .totals-table thead,
+    .totals-table tbody,
+    .totals-table tr,
+    .totals-table th,
+    .totals-table td {
+      display: block;
+    }
+
+    .totals-table thead {
+      display: none;
+    }
+
+    .totals-table tbody tr {
+      padding: 10px 12px;
+      border-block-end: 1px solid var(--line);
+    }
+
+    .totals-table tbody tr:last-child {
+      border-block-end: 0;
+    }
+
+    .totals-table tbody th,
+    .totals-table tbody td {
+      border: 0;
+      padding: 3px 0;
+      text-align: start;
+      white-space: normal;
+    }
+
+    .totals-table .num {
+      text-align: start;
+    }
+
+    .totals-table td[data-col='metric']::before {
+      content: var(--lbl-metric) ': ';
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .totals-table td[data-col='printed']::before {
+      content: var(--lbl-printed) ': ';
+      color: var(--muted);
+      font-family: var(--ga-font-sans);
+      font-size: 12px;
+    }
+
+    .totals-table td[data-col='counted']::before {
+      content: var(--lbl-counted) ': ';
+      color: var(--muted);
+      font-family: var(--ga-font-sans);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .totals-table td[data-col='note']::before {
+      content: var(--lbl-note) ': ';
+      color: var(--muted);
+      font-size: 12px;
+    }
+  }
+
   .page-grid {
     list-style: none;
     margin: 0;
@@ -382,7 +573,8 @@
     font-weight: 550;
   }
 
-  .thumb-seq {
+  .thumb-seq,
+  .thumb-count {
     color: var(--muted);
     font-size: 12px;
   }

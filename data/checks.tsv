@@ -1,1 +1,14 @@
 scheme	section	metric	printed	counted	note
+cn-1977	table1-1	entries	172	168	Printed 172 counts simplified characters across 167 rows (7 two-char word rows + 1 footnote split for 潦→了/涝).
+cn-1977	table1-2	entries	21	21	21 standalone simplified components in Table 1(2).
+cn-1977	table1-2-analogical	entries	55	55	55 analogical simplified characters listed in Table 1(2).
+cn-1977	table2-1	entries	72	79	Printed 72 counts new simplified characters across 79 printed rows (64 single-char + 15 two-char word rows).
+cn-1977	table2-2	entries	115	116	116 rows printed on pp. 5-6 (heading states 115).
+cn-1977	table2-3	entries	32	32	32 feature-reduction characters in Table 2(3).
+cn-1977	table2-4	entries	23	24	24 rows printed on p. 6 (heading states 23; 旁→㝑 also used in Table 2(1) words).
+cn-1977	table2-5	entries	16	16	16 cursive-regularized characters in Table 2(5).
+cn-1977	table2-6	entries	6	6	6 compound-ideograph characters in Table 2(6).
+cn-1977	table2-7	entries	5	5	5 symbolic-substitution characters in Table 2(7).
+cn-1977	table2-8-2-comp	entries	16	16	16 non-standalone simplified components in Table 2(8)(2).
+cn-1977	table2-8-analogical	forms	336	336	348 listed occurrences across 40 components minus 12 dual-component overlaps (熹 艘 褴 盘 霍 焦 憔 樵 礁 蕉 黎 藜) = 336 unique analogical characters.
+cn-1977		rules	61	61	21 Table 1 components + 24 Table 2 standalone components + 16 Table 2 non-standalone components = 61.

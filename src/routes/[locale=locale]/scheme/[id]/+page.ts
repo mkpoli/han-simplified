@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { editionsOfScheme, pagesOfEdition } from '$lib/data/books'
+import { checksOfScheme, editionsOfScheme, pageEntryCount, pagesOfEdition } from '$lib/data/books'
 import { REPLACED_BY, SCHEME_BY_ID } from '$lib/data/schemes'
 import type { PageLoad } from './$types'
 
@@ -11,6 +11,10 @@ export const load: PageLoad = ({ params }) => {
   const primary = editions[0] ?? null
   const pages = primary ? pagesOfEdition(primary.id) : []
   const successors = REPLACED_BY.get(scheme.id) ?? []
+  const checks = checksOfScheme(scheme.id)
+  const entryCounts = Object.fromEntries(
+    pages.map((p) => [p.seq, primary ? pageEntryCount(primary.id, p.seq) : 0]),
+  )
 
   return {
     scheme,
@@ -18,5 +22,7 @@ export const load: PageLoad = ({ params }) => {
     primary,
     pages,
     successors,
+    checks,
+    entryCounts,
   }
 }

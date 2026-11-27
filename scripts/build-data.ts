@@ -2,6 +2,7 @@
 import { mkdir, readdir, unlink, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { codepointToText } from '../src/lib/data/forms'
 import {
   TABLE_COLUMNS,
   TABLE_FILES,
@@ -9,6 +10,8 @@ import {
   type EntryBaseRow,
   type EntryRow,
   type FormRow,
+  type HeadRow,
+  type LinkRow,
   type RuleRow,
   type SightingRow,
 } from '../src/lib/data/schema'
@@ -27,6 +30,27 @@ export interface SchemeBundle {
   forms: Record<string, FormRow>
   rules: RuleRow[]
   checks: CheckRow[]
+  /** Maps head ID -> entry IDs in this scheme (computed via sourced links.tsv). */
+  byHead: Record<string, string[]>
+}
+
+export interface HeadSummary {
+  id: string
+  form: string
+  cp: string
+  text: string
+  ids: string
+  kind: HeadRow['kind']
+  /** Schemes that list this head (diff or inventory), for fast filtering before loading bundles. */
+  schemes: string[]
+}
+
+export interface HeadsPayload {
+  heads: HeadSummary[]
+  /** Maps encoded text (e.g. "发" or "發") -> head IDs that link to that form. */
+  charToHeads: Record<string, string[]>
+  /** Maps unencoded form ID -> head IDs and scheme IDs. */
+  formToHeads: Record<string, string[]>
 }
 
 async function main() {
@@ -51,7 +75,7 @@ async function main() {
 
   if (checkOnly) {
     console.log(
-      `Validated ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages, ${dataset.entries.length} entries, ${dataset.sightings.length} sightings, ${dataset.forms.length} forms across 12 tables with 0 errors.`,
+      `Validated ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages, ${dataset.entries.length} entries, ${dataset.sightings.length} sightings, ${dataset.forms.length} forms, ${dataset.heads.length} heads, ${dataset.links.length} links across 12 tables with 0 errors.`,
     )
     return
   }
@@ -60,7 +84,10 @@ async function main() {
   await mkdir(STATIC_DATA_DIR, { recursive: true })
 
   // Index auxiliary tables
+  const schemeById = new Map(dataset.schemes.map((s) => [s.id, s]))
   const formById = new Map(dataset.forms.map((f) => [f.id, f]))
+  const headByForm = new Map(dataset.heads.map((h) => [h.form, h]))
+
   const basesByEntry = new Map<string, EntryBaseRow[]>()
   for (const b of dataset.entry_bases) {
     const list = basesByEntry.get(b.entry) ?? []
@@ -88,6 +115,17 @@ async function main() {
     pageEntryCounts[pk] = set.size
   }
 
+  // Build form -> heads map from sourced links.tsv
+  const formToHeadsSet = new Map<string, Set<string>>()
+  for (const l of dataset.links) {
+    let set = formToHeadsSet.get(l.form)
+    if (!set) {
+      set = new Set()
+      formToHeadsSet.set(l.form, set)
+    }
+    set.add(l.head)
+  }
+
   // Group entries, rules, checks by scheme
   const entriesByScheme = new Map<string, EntryRow[]>()
   for (const e of dataset.entries) {
@@ -111,17 +149,21 @@ async function main() {
     checksByScheme.set(c.scheme, list)
   }
 
-  // Remove stale scheme bundles in static/data/
+  // Track which schemes cover each head
+  const headSchemes = new Map<string, Set<string>>()
+
   const existingStatic = await readdir(STATIC_DATA_DIR).catch(() => [] as string[])
   const activeBundleNames = new Set<string>()
-
   const bundleWrites: Promise<void>[] = []
+
   for (const [schemeId, schemeEntries] of entriesByScheme) {
     const fileName = `scheme-${schemeId}.json`
     activeBundleNames.add(fileName)
     const bases: Record<string, EntryBaseRow[]> = {}
     const sightings: Record<string, SightingRow[]> = {}
     const forms: Record<string, FormRow> = {}
+    const byHead: Record<string, string[]> = {}
+    const isInventory = schemeById.get(schemeId)?.coverage === 'inventory'
 
     const addForm = (fid: string) => {
       if (forms[fid]) return
@@ -129,13 +171,48 @@ async function main() {
       if (f) forms[fid] = f
     }
 
+    const linkEntryToHead = (headId: string, entryId: string) => {
+      const list = byHead[headId] ?? (byHead[headId] = [])
+      if (!list.includes(entryId)) list.push(entryId)
+      let schSet = headSchemes.get(headId)
+      if (!schSet) {
+        schSet = new Set()
+        headSchemes.set(headId, schSet)
+      }
+      schSet.add(schemeId)
+    }
+
     for (const e of schemeEntries) {
       addForm(e.form)
       const bs = basesByEntry.get(e.id)
       if (bs && bs.length > 0) {
         bases[e.id] = bs
-        for (const b of bs) addForm(b.form)
+        for (const b of bs) {
+          addForm(b.form)
+          // Resolve base -> head(s) through sourced links (or direct head match)
+          const directHead = headByForm.get(b.form)
+          if (directHead) {
+            linkEntryToHead(directHead.id, e.id)
+          } else {
+            const linked = formToHeadsSet.get(b.form)
+            if (linked) {
+              for (const hid of linked) linkEntryToHead(hid, e.id)
+            }
+          }
+        }
+      } else if (isInventory) {
+        // Inventory scheme unchanged character (e.g. jp-1949 一, 餐)
+        const directHead = headByForm.get(e.form)
+        if (directHead) {
+          linkEntryToHead(directHead.id, e.id)
+        } else {
+          const linked = formToHeadsSet.get(e.form)
+          if (linked) {
+            for (const hid of linked) linkEntryToHead(hid, e.id)
+          }
+        }
       }
+
       const ss = sightingsByEntry.get(e.id)
       if (ss && ss.length > 0) {
         sightings[e.id] = ss
@@ -155,6 +232,7 @@ async function main() {
       forms,
       rules: schemeRules,
       checks: checksByScheme.get(schemeId) ?? [],
+      byHead,
     }
     bundleWrites.push(writeFile(join(STATIC_DATA_DIR, fileName), JSON.stringify(bundle)))
   }
@@ -163,6 +241,52 @@ async function main() {
     if (file.startsWith('scheme-') && file.endsWith('.json') && !activeBundleNames.has(file)) {
       bundleWrites.push(unlink(join(STATIC_DATA_DIR, file)))
     }
+  }
+
+  // Build static/data/heads.json and static/data/links.json
+  const headsList: HeadSummary[] = dataset.heads.map((h) => {
+    const f = formById.get(h.form)
+    const cp = f?.codepoint ?? ''
+    return {
+      id: h.id,
+      form: h.form,
+      cp,
+      text: codepointToText(cp),
+      ids: f?.ids ?? '',
+      kind: h.kind,
+      schemes: [...(headSchemes.get(h.id) ?? [])].sort(),
+    }
+  })
+
+  const charToHeads: Record<string, string[]> = {}
+  const formToHeads: Record<string, string[]> = {}
+  const addCharHead = (txt: string, hid: string) => {
+    if (!txt) return
+    const list = charToHeads[txt] ?? (charToHeads[txt] = [])
+    if (!list.includes(hid)) list.push(hid)
+  }
+
+  for (const h of headsList) {
+    addCharHead(h.text, h.id)
+  }
+  for (const [fid, hset] of formToHeadsSet) {
+    const arr = [...hset]
+    formToHeads[fid] = arr
+    const f = formById.get(fid)
+    const txt = f ? codepointToText(f.codepoint) : ''
+    if (txt) {
+      for (const hid of arr) addCharHead(txt, hid)
+    }
+  }
+
+  const headsPayload: HeadsPayload = {
+    heads: headsList,
+    charToHeads,
+    formToHeads,
+  }
+
+  const linksPayload: { links: LinkRow[] } = {
+    links: dataset.links,
   }
 
   await Promise.all([
@@ -178,10 +302,12 @@ async function main() {
       join(OUT_DIR, 'page-entry-counts.json'),
       `${JSON.stringify(pageEntryCounts, null, 2)}\n`,
     ),
+    writeFile(join(STATIC_DATA_DIR, 'heads.json'), JSON.stringify(headsPayload)),
+    writeFile(join(STATIC_DATA_DIR, 'links.json'), JSON.stringify(linksPayload)),
     ...bundleWrites,
   ])
   console.log(
-    `Validated and built ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages, ${dataset.entries.length} entries (${entriesByScheme.size} scheme bundles) -> src/lib/generated/ & static/data/`,
+    `Validated and built ${dataset.schemes.length} schemes, ${dataset.editions.length} editions, ${dataset.pages.length} pages, ${dataset.entries.length} entries, ${dataset.heads.length} heads, ${dataset.links.length} links -> src/lib/generated/ & static/data/`,
   )
 }
 

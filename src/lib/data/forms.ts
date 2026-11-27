@@ -8,6 +8,7 @@ export interface SchemeBundle {
   forms: Record<string, FormRow>
   rules: RuleRow[]
   checks: CheckRow[]
+  byHead: Record<string, string[]>
 }
 
 /** Convert space-separated `U+XXXX` codepoints into their Unicode text string. */

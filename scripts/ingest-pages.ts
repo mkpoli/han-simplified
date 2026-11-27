@@ -40,6 +40,42 @@ async function sha256File(path: string): Promise<string> {
   return createHash('sha256').update(buf).digest('hex')
 }
 
+function parsePageOrder(spec: string, total: number): number[] {
+  if (!spec) return Array.from({ length: total }, (_, i) => i + 1)
+  const out: number[] = []
+  for (const part of spec.split(',')) {
+    const trimmed = part.trim()
+    if (!trimmed) continue
+    const range = trimmed.match(/^(\d+)-(\d+)$/)
+    if (range) {
+      const a = Number(range[1])
+      const b = Number(range[2])
+      const step = a <= b ? 1 : -1
+      for (let n = a; step > 0 ? n <= b : n >= b; n += step) out.push(n)
+    } else {
+      out.push(Number(trimmed))
+    }
+  }
+  for (const n of out) {
+    if (!Number.isInteger(n) || n < 1 || n > total) {
+      throw new Error(`Page index ${n} out of range 1..${total}`)
+    }
+  }
+  return out
+}
+
+async function runPool<T>(items: T[], concurrency: number, fn: (item: T, idx: number) => Promise<void>) {
+  let next = 0
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+    while (true) {
+      const idx = next++
+      if (idx >= items.length) break
+      await fn(items[idx], idx)
+    }
+  })
+  await Promise.all(workers)
+}
+
 async function upsertTsv(
   fileName: string,
   columns: readonly string[],
@@ -65,13 +101,18 @@ async function main() {
   const edition = arg('--edition')
   const pdf = arg('--pdf')
   const labelsRaw = arg('--labels') ?? ''
+  const pagesSpec = arg('--pages') ?? ''
+  const splitSpreadsSpec = arg('--split-spreads') ?? ''
+  const splitRtl = process.argv.includes('--rtl')
+  const bilevel = process.argv.includes('--bilevel')
   const uploadRemote = process.argv.includes('--upload')
   const uploadLocal = process.argv.includes('--local')
   const outCache = arg('--out-dir')
+  const concurrency = Math.max(1, Number(arg('--concurrency') ?? '4'))
 
   if (!edition || !pdf) {
     console.error(
-      'Usage: bun scripts/ingest-pages.ts --edition <id> --pdf <path> [--labels l1,l2,...] (--upload | --local | --out-dir <dir>)',
+      'Usage: bun scripts/ingest-pages.ts --edition <id> --pdf <path> [--bilevel] [--pages 2-31,1] [--split-spreads 2-8,11-15 --rtl] [--labels l1,l2,...] (--upload | --local | --out-dir <dir>)',
     )
     process.exit(1)
   }
@@ -85,12 +126,15 @@ async function main() {
   const labels = labelsRaw ? labelsRaw.split(',') : []
   const workDir = await mkdtemp(join(tmpdir(), `ingest-${edition}-`))
   const rawDir = join(workDir, 'raw')
+  const prepDir = join(workDir, 'prep')
   const webpDir = outCache ? resolve(outCache) : join(workDir, 'webp')
   await mkdir(rawDir, { recursive: true })
+  await mkdir(prepDir, { recursive: true })
   await mkdir(webpDir, { recursive: true })
 
   try {
-    await run(['pdfimages', '-j', resolve(pdf), join(rawDir, 'p')])
+    const extractFlag = bilevel ? '-png' : '-j'
+    await run(['pdfimages', extractFlag, resolve(pdf), join(rawDir, 'p')])
     const rawFiles = (await readdir(rawDir))
       .filter((f) => /^p-\d+\.(jpg|jpeg|png|ppm|pbm)$/i.test(f))
       .sort()
@@ -99,105 +143,184 @@ async function main() {
       throw new Error(`pdfimages extracted 0 images from ${pdf}`)
     }
 
-    const pageRows: Array<Record<string, string>> = []
-    const manifestRows: Array<Record<string, string>> = []
+    const order = parsePageOrder(pagesSpec, rawFiles.length)
+    const splitSet = new Set(splitSpreadsSpec ? parsePageOrder(splitSpreadsSpec, rawFiles.length) : [])
 
-    for (let i = 0; i < rawFiles.length; i++) {
-      const seq = i + 1
-      const rawPath = join(rawDir, rawFiles[i])
-      const rawSha = await sha256File(rawPath)
-      const [wStr, hStr] = (await run(['magick', 'identify', '-format', '%w %h', rawPath])).split(
+    interface PageWorkItem {
+      seq: number
+      rawPath: string
+      side: 'full' | 'left' | 'right'
+      transform: string
+      label: string
+    }
+
+    const workItems: PageWorkItem[] = []
+    let seqCounter = 0
+
+    for (const srcNum of order) {
+      let srcPath = join(rawDir, rawFiles[srcNum - 1])
+      let transform = 'none'
+
+      // Fix CCITT inverted stencil polarity (white ink on black background) without thresholding
+      if (bilevel) {
+        const meanStr = await run(['magick', 'identify', '-format', '%[fx:mean]', srcPath])
+        if (Number(meanStr) < 0.5) {
+          const negPath = join(prepDir, `neg-${srcNum}.png`)
+          await run(['magick', srcPath, '-negate', negPath])
+          srcPath = negPath
+          transform = 'negate-ccitt'
+        }
+      }
+
+      if (splitSet.has(srcNum)) {
+        const [wStr, hStr] = (await run(['magick', 'identify', '-format', '%w %h', srcPath])).split(/\s+/)
+        const W = Number(wStr)
+        const H = Number(hStr)
+        const half = Math.floor(W / 2)
+        const leftPath = join(prepDir, `split-${srcNum}-left.jpg`)
+        const rightPath = join(prepDir, `split-${srcNum}-right.jpg`)
+        await run(['magick', srcPath, '-crop', `${half}x${H}+0+0`, '+repage', '-quality', '94', leftPath])
+        await run(['magick', srcPath, '-crop', `${W - half}x${H}+${half}+0`, '+repage', '-quality', '94', rightPath])
+        const pair: Array<{ path: string; side: 'left' | 'right' }> = splitRtl
+          ? [
+              { path: rightPath, side: 'right' },
+              { path: leftPath, side: 'left' },
+            ]
+          : [
+              { path: leftPath, side: 'left' },
+              { path: rightPath, side: 'right' },
+            ]
+        for (const halfItem of pair) {
+          seqCounter++
+          workItems.push({
+            seq: seqCounter,
+            rawPath: halfItem.path,
+            side: halfItem.side,
+            transform: transform === 'none' ? `split-${halfItem.side}` : `${transform};split-${halfItem.side}`,
+            label: labels[seqCounter - 1] ?? String(seqCounter),
+          })
+        }
+      } else {
+        seqCounter++
+        workItems.push({
+          seq: seqCounter,
+          rawPath: srcPath,
+          side: 'full',
+          transform,
+          label: labels[seqCounter - 1] ?? String(seqCounter),
+        })
+      }
+    }
+
+    const pageRows: Array<Record<string, string>> = new Array(workItems.length)
+    const manifestRows: Array<Record<string, string>> = new Array(workItems.length)
+    const uploads: Array<{ key: string; file: string }> = []
+
+    await runPool(workItems, 4, async (item, idx) => {
+      const rawSha = await sha256File(item.rawPath)
+      const [wStr, hStr] = (await run(['magick', 'identify', '-format', '%w %h', item.rawPath])).split(
         /\s+/,
       )
       const width = Number(wStr)
       const height = Number(hStr)
-      if (!width || !height) throw new Error(`Invalid dimensions for ${rawPath}`)
+      if (!width || !height) throw new Error(`Invalid dimensions for ${item.rawPath}`)
 
       const imageKey = `pages/${rawSha}`
       const targetDir = join(webpDir, imageKey)
       await mkdir(targetDir, { recursive: true })
 
       const fullOut = join(targetDir, 'full.webp')
-      await run(['magick', rawPath, '-quality', '88', fullOut])
+      const fullArgs = bilevel
+        ? ['magick', item.rawPath, '-define', 'webp:lossless=true', fullOut]
+        : ['magick', item.rawPath, '-quality', '88', fullOut]
+      await run(fullArgs)
       const fullSha = await sha256File(fullOut)
 
       const generatedWidths: number[] = []
-      const uploads: Array<{ key: string; file: string }> = [
-        { key: `${imageKey}/full.webp`, file: fullOut },
-      ]
+      uploads.push({ key: `${imageKey}/full.webp`, file: fullOut })
 
       for (const tw of TARGET_WIDTHS) {
         const wOut = join(targetDir, `w${tw}.webp`)
-        await run(['magick', rawPath, '-resize', `${tw}x>`, '-quality', '84', wOut])
+        const resizeArgs = bilevel
+          ? ['magick', item.rawPath, '-resize', `${tw}x>`, '-define', 'webp:lossless=true', wOut]
+          : ['magick', item.rawPath, '-resize', `${tw}x>`, '-quality', '84', wOut]
+        await run(resizeArgs)
         generatedWidths.push(tw)
         uploads.push({ key: `${imageKey}/w${tw}.webp`, file: wOut })
       }
       generatedWidths.push(width)
 
-      for (const item of uploads) {
-        if (uploadRemote) {
-          await run(
-            [
-              'bunx',
-              'wrangler',
-              'r2',
-              'object',
-              'put',
-              `${BUCKET}/${item.key}`,
-              '--file',
-              item.file,
-              '--content-type',
-              'image/webp',
-              '--remote',
-            ],
-            ROOT,
-            2,
-          )
-        }
-        if (uploadLocal) {
-          await run(
-            [
-              'bunx',
-              'wrangler',
-              'r2',
-              'object',
-              'put',
-              `${BUCKET}/${item.key}`,
-              '--file',
-              item.file,
-              '--content-type',
-              'image/webp',
-              '--local',
-            ],
-            ROOT,
-            2,
-          )
-        }
-      }
-
-      pageRows.push({
+      pageRows[idx] = {
         edition,
-        seq: String(seq),
-        printed_label: labels[i] ?? String(seq),
-        side: 'full',
+        seq: String(item.seq),
+        printed_label: item.label,
+        side: item.side,
         raw_sha256: rawSha,
-        transform: 'none',
+        transform: item.transform,
         width: String(width),
         height: String(height),
         image_key: imageKey,
-      })
+      }
 
-      manifestRows.push({
+      manifestRows[idx] = {
         image_key: imageKey,
         edition,
-        page: String(seq),
+        page: String(item.seq),
         sha256: fullSha,
         width: String(width),
         height: String(height),
         widths: generatedWidths.join(','),
-      })
+      }
+    })
 
-      console.log(`Page ${seq}/${rawFiles.length}: ${width}x${height} -> ${imageKey}`)
+    if (uploadRemote) {
+      let done = 0
+      await runPool(uploads, concurrency, async (item) => {
+        await run(
+          [
+            'bunx',
+            'wrangler',
+            'r2',
+            'object',
+            'put',
+            `${BUCKET}/${item.key}`,
+            '--file',
+            item.file,
+            '--content-type',
+            'image/webp',
+            '--remote',
+          ],
+          ROOT,
+          3,
+        )
+        done++
+        if (done % 15 === 0 || done === uploads.length) {
+          console.log(`Uploaded remote ${done}/${uploads.length}`)
+        }
+      })
+    }
+
+    if (uploadLocal) {
+      await runPool(uploads, 2, async (item) => {
+        await run(
+          [
+            'bunx',
+            'wrangler',
+            'r2',
+            'object',
+            'put',
+            `${BUCKET}/${item.key}`,
+            '--file',
+            item.file,
+            '--content-type',
+            'image/webp',
+            '--local',
+          ],
+          ROOT,
+          2,
+        )
+      })
+      console.log(`Uploaded local ${uploads.length}/${uploads.length}`)
     }
 
     await upsertTsv(
@@ -212,7 +335,7 @@ async function main() {
       (r) => r.edition === edition,
       manifestRows,
     )
-    console.log(`Updated data/pages.tsv and data/media-manifest.tsv for ${edition}.`)
+    console.log(`Ingested ${workItems.length} pages for ${edition}.`)
   } finally {
     await rm(workDir, { recursive: true, force: true })
   }

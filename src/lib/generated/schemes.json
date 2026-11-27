@@ -23,7 +23,7 @@
     "adopted_on": "1935-08-21",
     "withdrawn_on": "1936-02",
     "replaces": [],
-    "state": "listed"
+    "state": "checked"
   },
   {
     "id": "cn-1955-draft",
@@ -94,7 +94,7 @@
     "replaces": [
       "cn-1956"
     ],
-    "state": "listed"
+    "state": "checked"
   },
   {
     "id": "cn-1975",

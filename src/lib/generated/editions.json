@@ -34,5 +34,17 @@
     "retrieved_on": "2026-11-27",
     "sha256": "7c6da02b1811102141044bbdf26e575086366759047d24653fca99b62543fafc",
     "note": "Bilevel scan, 36 pages (NLC416-08jh009497-19562); main character table on pp. 7–25 (printed 五–二三)"
+  },
+  {
+    "id": "jp-1949-kanpo-1949",
+    "scheme": "jp-1949",
+    "title": "当用漢字字体表",
+    "imprint": "官報号外（第三十二号）内閣告示第一号，昭和24年（1949年）4月28日",
+    "holder": "National Diet Library (via Wikimedia Commons)",
+    "source_url": "https://commons.wikimedia.org/wiki/File:NDL2963228_%E5%AE%98%E5%A0%B1_1949%E5%B9%B404%E6%9C%8828%E6%97%A5.pdf",
+    "supplied_by": "Wikimedia Commons",
+    "retrieved_on": "2026-11-27",
+    "sha256": "2e6dbdfff5962f7930d7049705b0ded78db81e70431a9684d21e283b55d7f01c",
+    "note": "Official Gazette Extra No. 32 (pp. 1–3 extracted from NDL2963228 PDF pages 10–11, spread split right-to-left)"
   }
 ]

@@ -823,5 +823,38 @@
     "width": 1645,
     "height": 2271,
     "image_key": "pages/a5687bdb35db175794135816d856dea58878c359dbd1ceb20e873b98165d51cf"
+  },
+  {
+    "edition": "jp-1949-kanpo-1949",
+    "seq": 1,
+    "printed_label": "1",
+    "side": "full",
+    "raw_sha256": "7886233f6f788e2192de32fcf7d365336d6efeefc6880b0df02c17a722e0c609",
+    "transform": "none",
+    "width": 3040,
+    "height": 5408,
+    "image_key": "pages/7886233f6f788e2192de32fcf7d365336d6efeefc6880b0df02c17a722e0c609"
+  },
+  {
+    "edition": "jp-1949-kanpo-1949",
+    "seq": 2,
+    "printed_label": "2",
+    "side": "right",
+    "raw_sha256": "7991346811f0ddd5acad450abb549df8bc1cd02ae006ab387ea8836feb1be2b4",
+    "transform": "split-right",
+    "width": 2976,
+    "height": 5408,
+    "image_key": "pages/7991346811f0ddd5acad450abb549df8bc1cd02ae006ab387ea8836feb1be2b4"
+  },
+  {
+    "edition": "jp-1949-kanpo-1949",
+    "seq": 3,
+    "printed_label": "3",
+    "side": "left",
+    "raw_sha256": "18ac5e474634f3d7b740d32996f90bd573a3f5f980fdd434de7a257c2c247fe5",
+    "transform": "split-left",
+    "width": 2976,
+    "height": 5408,
+    "image_key": "pages/18ac5e474634f3d7b740d32996f90bd573a3f5f980fdd434de7a257c2c247fe5"
   }
 ]

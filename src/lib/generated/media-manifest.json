@@ -973,5 +973,44 @@
       1600,
       1645
     ]
+  },
+  {
+    "image_key": "pages/7886233f6f788e2192de32fcf7d365336d6efeefc6880b0df02c17a722e0c609",
+    "edition": "jp-1949-kanpo-1949",
+    "page": 1,
+    "sha256": "93867cb549d3014d49a171e43f5c131f6a5ea0b0e68d588e97c6bd747c49d402",
+    "width": 3040,
+    "height": 5408,
+    "widths": [
+      320,
+      1600,
+      3040
+    ]
+  },
+  {
+    "image_key": "pages/7991346811f0ddd5acad450abb549df8bc1cd02ae006ab387ea8836feb1be2b4",
+    "edition": "jp-1949-kanpo-1949",
+    "page": 2,
+    "sha256": "1e14df745653b2c0146f896a46e1614fb3d3681dc81698451de02d9d87ccbd80",
+    "width": 2976,
+    "height": 5408,
+    "widths": [
+      320,
+      1600,
+      2976
+    ]
+  },
+  {
+    "image_key": "pages/18ac5e474634f3d7b740d32996f90bd573a3f5f980fdd434de7a257c2c247fe5",
+    "edition": "jp-1949-kanpo-1949",
+    "page": 3,
+    "sha256": "03ea77795b635d55a8b903c05144ba9a5522c6087d0ccd428eab4009bfd32cb9",
+    "width": 2976,
+    "height": 5408,
+    "widths": [
+      320,
+      1600,
+      2976
+    ]
   }
 ]

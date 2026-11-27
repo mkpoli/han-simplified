@@ -104,4 +104,36 @@ describe('cn-1977 dataset integrity', () => {
     expect(yan1935).toBeDefined()
     expect(formById.get(yan1935!.form)?.codepoint).toBe('U+25081')
   })
+
+  it('validates jp-1949 full 1,850 inventory with unchanged entries stored explicitly', () => {
+    const { dataset, errors } = validateDataDir(DATA_DIR)
+    expect(errors).toEqual([])
+
+    const jp = dataset.schemes.find((s) => s.id === 'jp-1949')
+    expect(jp?.state).toBe('checked')
+    expect(jp?.coverage).toBe('inventory')
+
+    const entries = dataset.entries.filter((e) => e.scheme === 'jp-1949')
+    expect(entries.length).toBe(1850)
+
+    const formById = new Map(dataset.forms.map((f) => [f.id, f]))
+    const baseByEntry = new Map<string, string[]>()
+    for (const b of dataset.entry_bases) {
+      const list = baseByEntry.get(b.entry) ?? []
+      list.push(formById.get(b.form)?.codepoint ?? '')
+      baseByEntry.set(b.entry, list)
+    }
+
+    // Unchanged entry (一) has empty entry_bases; simplified entry (国) records 國; 燈 retained in 1949
+    const yi = entries.find((e) => formById.get(e.form)?.codepoint === 'U+4E00')
+    expect(yi).toBeDefined()
+    expect(baseByEntry.get(yi!.id) ?? []).toEqual([])
+
+    const guo = entries.find((e) => formById.get(e.form)?.codepoint === 'U+56FD')
+    expect(guo).toBeDefined()
+    expect(baseByEntry.get(guo!.id)).toContain('U+570B')
+
+    const deng = entries.find((e) => formById.get(e.form)?.codepoint === 'U+71C8')
+    expect(deng).toBeDefined()
+  })
 })

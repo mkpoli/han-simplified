@@ -158,5 +158,13 @@
     "printed": 146,
     "counted": 146,
     "note": "132 standalone simplified characters + 14 non-standalone components = 146 rules."
+  },
+  {
+    "scheme": "jp-1949",
+    "section": "",
+    "metric": "entries",
+    "printed": 1850,
+    "counted": 1850,
+    "note": "Full inventory of 1,850 当用漢字 in Kangxi radical order (300 simplified/variant forms with traditional bases, 1550 listed unchanged); 燈 retained as 燈 in 1949."
   }
 ]

@@ -1,0 +1,106 @@
+[
+  {
+    "scheme": "cn-1977",
+    "section": "table1-1",
+    "metric": "entries",
+    "printed": 172,
+    "counted": 168,
+    "note": "Printed 172 counts simplified characters across 167 rows (7 two-char word rows + 1 footnote split for 潦→了/涝)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table1-2",
+    "metric": "entries",
+    "printed": 21,
+    "counted": 21,
+    "note": "21 standalone simplified components in Table 1(2)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table1-2-analogical",
+    "metric": "entries",
+    "printed": 55,
+    "counted": 55,
+    "note": "55 analogical simplified characters listed in Table 1(2)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-1",
+    "metric": "entries",
+    "printed": 72,
+    "counted": 79,
+    "note": "Printed 72 counts new simplified characters across 79 printed rows (64 single-char + 15 two-char word rows)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-2",
+    "metric": "entries",
+    "printed": 115,
+    "counted": 116,
+    "note": "116 rows printed on pp. 5-6 (heading states 115)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-3",
+    "metric": "entries",
+    "printed": 32,
+    "counted": 32,
+    "note": "32 feature-reduction characters in Table 2(3)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-4",
+    "metric": "entries",
+    "printed": 23,
+    "counted": 24,
+    "note": "24 rows printed on p. 6 (heading states 23; 旁→㝑 also used in Table 2(1) words)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-5",
+    "metric": "entries",
+    "printed": 16,
+    "counted": 16,
+    "note": "16 cursive-regularized characters in Table 2(5)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-6",
+    "metric": "entries",
+    "printed": 6,
+    "counted": 6,
+    "note": "6 compound-ideograph characters in Table 2(6)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-7",
+    "metric": "entries",
+    "printed": 5,
+    "counted": 5,
+    "note": "5 symbolic-substitution characters in Table 2(7)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-8-2-comp",
+    "metric": "entries",
+    "printed": 16,
+    "counted": 16,
+    "note": "16 non-standalone simplified components in Table 2(8)(2)."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "table2-8-analogical",
+    "metric": "forms",
+    "printed": 336,
+    "counted": 336,
+    "note": "348 listed occurrences across 40 components minus 12 dual-component overlaps (熹 艘 褴 盘 霍 焦 憔 樵 礁 蕉 黎 藜) = 336 unique analogical characters."
+  },
+  {
+    "scheme": "cn-1977",
+    "section": "",
+    "metric": "rules",
+    "printed": 61,
+    "counted": 61,
+    "note": "21 Table 1 components + 24 Table 2 standalone components + 16 Table 2 non-standalone components = 61."
+  }
+]
